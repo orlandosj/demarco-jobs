@@ -1,0 +1,368 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Divulgação de Vaga - Demarco</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@650;850&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
+    <link rel="icon" href="https://demarco.com.br/favicon.ico" type="image/x-icon">
+
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f2f2f2;
+        }
+
+        .form-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        td {
+            vertical-align: top;
+        }
+
+            td:first-child {
+                padding-right: 15px;
+            }
+
+        input {
+            font-size: 11px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 9px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            border: 1px solid #999;
+            background: #F1F1F1;
+            color: #212121;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: 650;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #downloadButton {
+            background-color: #ff0000;
+            border: none;
+            color: white;
+            font-size: 13px;
+            padding: 8px 16px;
+        }
+
+        button:hover {
+            background-color: #f1f1f1;
+        }
+
+        #downloadButton:hover {
+            background-color: #cc0000;
+            color: white;
+        }
+
+
+
+
+
+        button:hover {
+            opacity: 0.7;
+        }
+
+        canvas {
+            margin-top: 15px;
+        }
+
+        .canvas-container {
+            display: flex;
+            flex-direction: row;
+        }
+
+        canvas {
+            width: 500px;
+            height: 622px;
+        }
+
+        .inputs-container {
+            margin-left: 50px;
+        }
+
+        #preloadingGif {
+            width: 20px;
+            height: 20px;
+            margin-bottom: -5px;
+            margin-left: 5px;
+            display: none;
+        }
+
+        .share-button {
+            background-color: #f1f1f1;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 10px;
+            padding: 0;
+            transition: background-color 0.3s;
+            float: right;
+        }
+
+            .share-button i {
+                font-size: 15px;
+                color: #212121;
+            }
+
+            .share-button:hover {
+                background-color: #e0e0e0;
+            }
+
+                .share-button:hover i {
+                    color: #000;
+                }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+          <center>
+               <h2>Divulgação de Vagas</h2>
+              
+           </center>
+
+        <div class="canvas-container">
+            <canvas id="vagaCanvas" width="1000" height="1243"></canvas>
+            <div class="inputs-container">
+                <span style="font-size: 14px;">Nome:<br /> <input type="text" name="nome" id="nome" oninput="gerarImagem()"></span><br /><br>
+                <span style="font-size: 14px;">Principais Resposabilidades:<br /> <textarea type="text" rows="7" cols="70" name="descricaoTopico" id="descricaoTopico"></textarea></span><br /><br>
+                <button id="generateDescriptionButton">GERAR DESCRIÇÃO</button>
+                <img id="preloadingGif" src="https://media1.giphy.com/media/l4FGKbWgkhHVGXzTW/giphy.gif?cid=ecf05e47owivz1efipxjo4s8bb228u3uqw9q0wj0w6gii8fo&rid=giphy.gif&ct=s" style="display: none;">
+                <br /><br>
+
+                <span style="font-size: 14px;">Descrição:<br /> <textarea name="descricao" id="descricao" rows="16" cols="70" oninput="gerarImagem()"></textarea></span><br><br>
+                <button onclick="alternarImagem()">VAGA EXTENSIVA A PCD</button><br /><br />
+                <button id="downloadButton">BAIXAR IMAGEM</button>
+                <!--<button id="whatsappShareButton" class="share-button"><i class="fab fa-whatsapp"></i></button>
+    <button id="instagramShareButton" class="share-button"><i class="fab fa-instagram"></i></button>
+    <button id="linkedinShareButton" class="share-button"><i class="fab fa-linkedin"></i></button>-->
+
+
+
+
+            </div>
+        </div>
+
+
+
+    </div>
+        <script>
+
+
+            document.getElementById("generateDescriptionButton").addEventListener("click", generateDescription);
+
+            async function generateDescription() {
+                // Limpa o campo de descrição e exibe o GIF de preloading
+                document.getElementById('descricao').value = "";
+                document.getElementById('preloadingGif').style.display = "inline-block";
+
+
+                const prompt = "Você é  um recrutador criativo e envolvente que trabalha para a empresa Demarco.Seu objetivo é criar uma descrição de vaga atrativa e concisa com um limite máximo de 330 caracteres.A vaga em questão é" + document.getElementById('nome').value + ".e suas principais responsabilidades são" + document.getElementById('descricaoTopico').value + ".Dê vida a esta posição, destacando por que ela é importante, interessante e desafiadora.Mantenha um tom de voz entusiasmado e profissional.";
+
+                const response = await fetch('/api/generate-description', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        max_length: 290,
+                    }),
+                });
+
+                const data = await response.json();
+
+                // Insere o texto gerado no campo descrição e oculta o GIF de preloading
+                document.getElementById('descricao').value = data;
+                document.getElementById('preloadingGif').style.display = "none";
+                document.getElementById('descricao').value = data.replace(/^\s+|\s+$/g, '');
+                gerarImagem();
+            }
+
+
+
+
+
+
+            var imagemFundo1 = new Image();
+            imagemFundo1.src = "./Vaga1.png"; // Certifique-se de que a imagem esteja no mesmo servidor
+            var imagemFundo2 = new Image();
+            imagemFundo2.src = "./Vaga2.png"; // Certifique-se de que a imagem esteja no mesmo servidor
+            var imagemAtual = imagemFundo1;
+            imagemFundo1.onload = function () {
+                gerarImagem();
+            };
+            imagemFundo2.onload = function () {
+                gerarImagem();
+            };
+            function alternarImagem() {
+                imagemAtual = (imagemAtual == imagemFundo1) ? imagemFundo2 : imagemFundo1;
+                gerarImagem();
+            }
+
+            function fillTextBackground(ctx, text, x, y, backgroundColor) {
+                var originalFillStyle = ctx.fillStyle;
+                var width = ctx.measureText(text).width;
+                var height = parseInt(ctx.font, 10);
+                ctx.fillStyle = backgroundColor;
+                ctx.fillRect(x, y - height, width, height);
+                ctx.fillStyle = originalFillStyle;
+            }
+
+            function gerarImagem() {
+                var nome = document.getElementById("nome").value.toUpperCase();
+                var descricao = document.getElementById("descricao").value;
+                var canvas = document.getElementById("vagaCanvas");
+                var ctx = canvas.getContext("2d");
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(imagemAtual, 0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "#fff";
+                ctx.font = "bold 30px Montserrat";
+                ctx.textAlign = "center"; // Alinhamento horizontal centralizado
+                ctx.fillText(nome, canvas.width / 2.55, 379); // Adiciona margem direita de 40px
+                ctx.fillStyle = "#D9D9D9";
+                ctx.font = "24px Montserrat";
+                var downloadButton = document.getElementById("downloadButton");
+                if (descricao.trim() === "") {
+                    downloadButton.disabled = true;
+                    downloadButton.style.opacity = 0.5;
+                } else {
+                    downloadButton.disabled = false;
+                    downloadButton.style.opacity = 1;
+                }
+
+                // Função para ajustar o texto ao width de 500px e quebrar linhas
+                function wrapText(context, text, x, y, maxWidth, lineHeight) {
+                    var lines = text.split('\n'); // Quebra o texto em linhas
+
+                    for (var i = 0; i < lines.length; i++) {
+                        var words = lines[i].split(' ');
+                        var line = '';
+
+                        for (var n = 0; n < words.length; n++) {
+                            var testLine = line + words[n] + ' ';
+                            var metrics = context.measureText(testLine);
+                            var testWidth = metrics.width;
+                            if (testWidth > maxWidth && n > 0) {
+                                context.fillText(line, x, y);
+                                line = words[n] + ' ';
+                                y += lineHeight * 1.5; // Adicione aqui o espaçamento entre linhas desejado
+                            } else {
+                                line = testLine;
+                            }
+                        }
+                        context.fillText(line, x, y);
+                        y += lineHeight; // Adicione aqui o espaçamento entre linhas desejado
+                    }
+                }
+
+
+
+
+                // Chama a função wrapText para desenhar o texto no canvas
+                ctx.textAlign = "left"; // Alinhamento à esquerda para o descricaotopico
+                wrapText(ctx, descricao, 95, 633, 700, 20);
+            }
+
+            document.getElementById("nome").addEventListener("input", gerarImagem);
+            document.getElementById("descricao").addEventListener("input", gerarImagem);
+            gerarImagem();
+
+            document.getElementById("downloadButton").onclick = function () {
+                const canvas = document.getElementById("vagaCanvas");
+                const link = document.createElement("a");
+                link.download = "vaga.png";
+
+                // Converte o canvas em uma URL de imagem
+                canvas.toBlob((blob) => {
+                    link.href = URL.createObjectURL(blob);
+
+                    // Clica no link de download
+                    link.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+                }, "image/png");
+            }
+
+            document.getElementById("whatsappShareButton").addEventListener("click", function () {
+                shareOnWhatsApp();
+            }, false);
+
+            document.getElementById("instagramShareButton").addEventListener("click", function () {
+                shareOnInstagram();
+            }, false);
+
+            document.getElementById("linkedinShareButton").addEventListener("click", function () {
+                shareOnLinkedIn();
+            }, false);
+
+
+            async function shareOnWhatsApp() {
+                const canvas = document.getElementById("vagaCanvas");
+                const imageURL = await canvasToDataURL(canvas);
+                const encodedImageURL = encodeURIComponent(imageURL);
+                const message = encodeURIComponent("Confira esta vaga!");
+                const whatsappURL = `https://wa.me/?text=${message}%0A${encodedImageURL}`;
+                window.open(whatsappURL, "_blank");
+            }
+
+            async function shareOnInstagram() {
+                alert("O Instagram não permite compartilhar imagens diretamente. Por favor, baixe a imagem e compartilhe manualmente.");
+            }
+
+            async function shareOnLinkedIn() {
+                const canvas = document.getElementById("vagaCanvas");
+                const imageURL = await canvasToDataURL(canvas);
+                const encodedImageURL = encodeURIComponent(imageURL);
+                const title = encodeURIComponent("Vaga: " + document.getElementById("nome").value);
+                const summary = encodeURIComponent("Confira esta vaga!");
+                const linkedInURL = `https://www.linkedin.com/shareArticle?mini=true&url=${encodedImageURL}&title=${title}&summary=${summary}`;
+                window.open(linkedInURL, "_blank");
+            }
+
+            function canvasToDataURL(canvas) {
+                return new Promise((resolve) => {
+                    canvas.toBlob((blob) => {
+                        const imageURL = URL.createObjectURL(blob);
+                        resolve(imageURL);
+                    }, "image/png");
+                });
+            }
+
+
+        </script>
+    </body>
+    </html>
+
+
+

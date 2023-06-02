@@ -1,0 +1,5 @@
+if (data.choices && data.choices.length > 0) {
+  res.json(data.choices[0].text);
+} else {
+  res.status(500).json({ error: 'Empty response from ChatGPT API' });
+}
