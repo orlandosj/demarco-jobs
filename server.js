@@ -29,7 +29,7 @@ app.post('/api/generate-description', async (req, res) => {
         });
 
         const data = await response.json();
-        console.log(data); // Log de depura��o
+        console.log('Result: ', data); // Log de depura��o
         res.json(data.choices[0].text);
     } catch (error) {
         console.error('Error fetching ChatGPT API:', error);
